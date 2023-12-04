@@ -29,27 +29,8 @@ interfaceでTodoListの型も設定
 npm install @trpc/client @trpc/server @trpc/react-query @tanstack/react-query@^4.0.0
 
 ③utils/trpc.tsを作成し、hooksを作成
-import { createTRPCReact } from "@trpc/react-query";
-import type { AppRouter } from "../../../server/server";
-export const trpc = createTRPCReact<AppRouter>();
 
-④下記のような形でuseStateとqueryClientとtrpcClientを使ってプロシージャーを読み込む
-function App() {
-  const [queryClient] = useState(() => new QueryClient());
-  const [trpcClient] = useState(()=>trpc.createClient({
-    links:[
-      httpBatchLink({
-        url:"https://localhost:5000/trpc",
-
-      })
-    ] }))
-
-  return <trpc.Provider client={trpcClient} queryClient={queryClient}>
-    <QueryClientProvider client={queryClient}>
-      <TodoList />
-    </QueryClientProvider>
-  </trpc.Provider>;
-}
+④useStateとqueryClientとtrpcClientを使ってプロシージャーを読み込む
 
 ④cmponents/TodoList.tsxを作成
 
@@ -60,29 +41,12 @@ function App() {
 ⑥map関数でTodoListの値を全て表示
 
 ⑦プロシージャーのinputを使ってtodoの追加を作成
-addTodo:publicProcedure.input(z.string()).mutation((req)=>{
-    const id = `${Math.random()}`;
-    const todo:Todo = {
-      id,
-      title:req.input,
-      description:req.input
-    }
-    todoList.push(todo);
-    return todoList;
-  })
 
 ⑧フロント側にuseMutetionを使って追加機能を設定
 inputとbuttonの部分に設定
 トリガーにuseStateを使う
 
 ⑨削除機能設定
-  deleteTodo:publicProcedure.input(z.string()).mutation((req)=>{
-    const idTodoDelete = req.input;
-    削除したい項目をfindIndexで検索
-    const indexToDelete = todoList.findIndex((todo)=>todo.id === idTodoDelete);
-    todoList.splice(indexToDelete,1);
-    return todoList;
-  })
 
 ⑩フロント側の削除機能設定
 
